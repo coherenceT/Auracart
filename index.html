@@ -917,6 +917,7 @@
                 justify-content: center;
                 gap: 0.8rem;
                 flex-wrap: wrap;
+                align-items: stretch;
             }
 
             .nav-pill {
@@ -924,6 +925,17 @@
                 font-size: 0.85rem;
                 min-width: 120px;
                 text-align: center;
+                height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .cart-btn {
+                height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .dropdown-content {
@@ -1987,37 +1999,53 @@
             // Update UI
             updateCartUI();
             
-            // Show cart briefly
-            openCart();
+            // Check if mobile - don't auto-open cart on mobile
+            const isMobile = window.innerWidth <= 768;
+            if (!isMobile) {
+                // Show cart briefly on desktop only
+                openCart();
+                setTimeout(() => {
+                    closeCart();
+                }, 2000);
+            }
             
-            // Show seamless confirmation
+            // Show seamless confirmation with animation
             const confirmation = document.createElement('div');
             confirmation.style.position = 'fixed';
             confirmation.style.top = '20px';
             confirmation.style.right = '20px';
-            confirmation.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            confirmation.style.backgroundColor = 'rgba(107, 70, 193, 0.95)';
             confirmation.style.color = 'white';
-            confirmation.style.padding = '15px 25px';
-            confirmation.style.borderRadius = '10px';
+            confirmation.style.padding = '12px 20px';
+            confirmation.style.borderRadius = '8px';
             confirmation.style.zIndex = '2000';
-            confirmation.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
-            confirmation.style.fontSize = '1rem';
+            confirmation.style.boxShadow = '0 4px 20px rgba(107, 70, 193, 0.4)';
+            confirmation.style.fontSize = '0.9rem';
             confirmation.style.fontWeight = '600';
             confirmation.style.display = 'flex';
             confirmation.style.alignItems = 'center';
-            confirmation.style.gap = '10px';
+            confirmation.style.gap = '8px';
+            confirmation.style.transition = 'all 0.3s ease';
+            confirmation.style.transform = 'translateX(100px)';
+            confirmation.style.opacity = '0';
             confirmation.textContent = `✓ ${product.name} added to cart!`;
             confirmation.id = 'cart-confirmation';
 
             document.body.appendChild(confirmation);
 
-            // Remove confirmation after 3 seconds
+            // Animate in
             setTimeout(() => {
+                confirmation.style.transform = 'translateX(0)';
+                confirmation.style.opacity = '1';
+            }, 100);
+
+            // Remove confirmation after 3 seconds with smooth animation
+            setTimeout(() => {
+                confirmation.style.transform = 'translateX(100px)';
                 confirmation.style.opacity = '0';
-                confirmation.style.transform = 'translateY(-20px)';
                 setTimeout(() => {
                     confirmation.remove();
-                }, 500);
+                }, 300);
             }, 3000);
         }
 
@@ -2154,7 +2182,7 @@
             
             // Encode message for URL
             const encodedMessage = encodeURIComponent(message);
-            const phoneNumber = '0640999042';
+            const phoneNumber = '27640999042'; // South Africa country code + number
             const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
             
             // Open WhatsApp
